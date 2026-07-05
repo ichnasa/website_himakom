@@ -1,0 +1,27 @@
+- Minimize the client boundary to keep client side performance better and load faster because smaller code bundle size
+- circulare refference in css can cause unloaded css styling
+    - example: 
+    @theme inline {
+        --font-sans: var(--font-sans);  
+    }
+    -> should be like: --font-sans: var(--font-inter);
+- WAL. Write Aheas Logging is applying the changes to temp log then apply it on to the real database, so when database crashes we have temp log, we can use the information from that log to recover the database by replaying the sucess transaction and remove incomplete transaction that were intterupted by the crash
+- We can use SQLite as local database for simple stuff (rarely changing data and not transaction data), we can do that by creating a code or a file that create the database connection with the SQLite then export the object so it can be used by other components. In this case is database.ts
+- If we want to create a folder for pages but don't want the name of the folder turn into URL path, we can close it with parentheses so next js will ignore it
+- Cookies work in two ways communication. Client send cookies to server for every request and server can do operation to that cookies by telling the client what to do. e.g: set, delete, etc
+- UNDERSTAND THE CODE FLOW BEFORE DEBUGGING !!SUPER IMPORTANT
+- Learn how to Performance Profiling (to measure code performance), Bencmarking (To decide which method is better), Request Tracing (to track flow and time for every stage in http request), Execution Time / Latency (to know how much time needed for operation is completed)
+- Function.prototype.bind() can fill argument partially, for example multiplyTwo = multiply.bind(null, 2) then we can use multiplyTwo(4) that will return 8. bind() also used for keeping the 'this' context of a function when it is being called outside its original scope, for example an 'makeSound' function inside an object that contain 'sound' variable and the 'makeSound' function. In this case, the 'makeSound' function use the value of 'sound' variable by using this.sound, since it is in the same scope, when we call object.makeSound() it will return the value of 'sound' but if we uses it outside the scope for example const makeSoundOutside = object.makeSound then call makeSoundOutside() in outerscope, it will return undefined because 'this' keyword when we call makeSoundOutside will be referring to 'this' global scope, we can fix this **by binding the 'this' context of an object to the function, the function will have the object context even if the function called outside the scope**. We can also use bind() on server action to pass additonal arguments but the Server Function must have that parameter.
+- We can send argument to the formData via hiddenInput, so when the form is submitted it will include the value of hidden input that is filled trough variable (e.g. <input type="hidden" name="userId" value={userId} />)
+- In Zod lib for validating input. When validating using async function for doing refinements or transforms, we'll need to use parseAsync to wait for the async process done so we can proceed to the next stuff
+- When using useActionState, the server function will always receive prevState or initialState as its first arguments
+- Initial state structure must have all properties possibly return by the server action
+- React will automatically create a context in <form>. useFormStatus() is a hook that allow child component to read that context so the child component can access parent data without needing the parent component to pass props to the child component.
+- revalidatePath is used for invalidating the cache of the path 
+- We can only have one proxy.ts, since we can implement modular proxy logic for handling specific task and in the end we have centralized many proxy into single place
+- matcher config allow us to run proxy on specific path
+- 'import type' is used to import an object as a type even though its not actually typescript interface or type
+- Object.entries(navEl).map(([key, value])). It convert object into an array of array off a key value pair and then destructure it.
+- In App Router, html and body element can only exist once in root layout, other that will cause problem whne rendering. We can use div, fragment, or other wrapper html element.
+- : after variable name is for type annotation of that variable, while 'as" after value is a type assertion for the value
+- If a function is already define what the return type is, when we call the function we don't have to add type annotation for the variable and we don't have to add type assertion anymore.

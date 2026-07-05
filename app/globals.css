@@ -1,26 +1,140 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/**
+ * DESIGN.md — Design Tokens (Tailwind v4 @theme)
+ * Token ini otomatis tersedia sebagai Tailwind utility class:
+ *   --color-primary  → bg-primary, text-primary, border-primary
+ *   --radius-button  → rounded-button
+ *   --font-sans      → font-sans
+ */
+@theme {
+  /* Brand */
+  --color-primary: #0075de;
+  --color-primary-active: #005bab;
+  --color-primary-soft: #e6f3fe;
+  --color-primary-muted: #f2f9ff;
+  --color-on-primary: #ffffff;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* Surface */
+  --color-canvas: #ffffff;
+  --color-canvas-soft: #f9f9f8;
+  --color-hairline: rgba(0, 0, 0, 0.10);
+  --color-hairline-strong: #dfdcd9;
+  --color-alpha-black: rgba(0, 0, 0, 0.05);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Text */
+  --color-ink: rgba(0, 0, 0, 0.95);
+  --color-body: rgba(0, 0, 0, 0.75);
+  --color-muted: #78736f;
+  --color-muted-light: #a39e98;
+
+  /* Semantic */
+  --color-success: #1aae39;
+  --color-error: #dd5b00;
+
+  /* Border Radius */
+  --radius-button: 8px;
+  --radius-card: 12px;
+  --radius-pill: 9999px;
+
+  /* Font */
+  --font-sans: Inter, -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #ffffff;
+  color: rgba(0, 0, 0, 0.95);
+  font-family: Inter, -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Page Section Styles */
+.hero-section {
+  background-image: url('/foto_kabinet_arunanta.jpeg');
+}
+
+.hero-overlay {
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.29) 0%, rgba(0, 0, 0, 0.50) 0%, rgba(0, 0, 0, 0.92) 100%);
+}
+
+.hero-divider {
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.4), transparent);
+}
+
+.visi-misi-section {
+  background: linear-gradient(180deg, #ffffff 0%, #f2f2f0 100%);
+}
+
+.visi-misi-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f8f7 100%);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+  border-left: 1px solid rgba(0, 0, 0, 0.07);
+  border-right: 1px solid rgba(0, 0, 0, 0.07);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+.quote-mark {
+  font-family: Georgia, serif;
+  line-height: 0.5;
+  opacity: 0.15;
+}
+
+.about-section {
+  background: linear-gradient(150deg, #e8e8e6 0%, #f0f0ee 50%, #e4e4e2 100%);
+}
+
+.about-decoration {
+  background: radial-gradient(circle, rgba(0, 117, 222, 0.15) 0%, transparent 70%);
+  transform: translate(30%, -30%);
+}
+
+.text-gradient-dark {
+  background: linear-gradient(135deg, #0a0a0a 0%, #444 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-primary {
+  background: linear-gradient(135deg, #0075de 0%, #005bab 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stat-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f5f5f3 100%);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.partner-section {
+  background: linear-gradient(180deg, #f8f8f6 0%, #ffffff 60%, #f8f8f6 100%);
+  border-top: 1px solid rgba(0, 0, 0, 0.07);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+.partner-line-right {
+  background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.15));
+}
+
+.partner-line-left {
+  background: linear-gradient(to left, transparent, rgba(0, 0, 0, 0.15));
+}
+
+.feedback-section {
+  background: linear-gradient(150deg, #eaeae8 0%, #f2f2f0 50%, #e6e6e4 100%);
+}
+
+.feedback-decoration {
+  background: radial-gradient(circle, rgba(0, 117, 222, 0.2) 0%, transparent 70%);
+  transform: translate(-30%, 30%);
+}
+
+.feedback-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f8f7 100%);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 0;
 }
