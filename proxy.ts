@@ -1,11 +1,14 @@
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
-import { protectedRoutesPrefixes } from "./app/config/sidebar";
+import { getModulesAction } from "./app/sidebar/action";
 
-const protectedRoutes = ['/dashboard'];
 const unprotectedRoutes = ['/login', '/event']
 
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
+    const modules = await getModulesAction();
+    const protectedRoutes = modules.map((module) => {
+        return module.href;
+    })
     const token = request.cookies.get('jwt_token')?.value;
     const { pathname } = request.nextUrl;
 
