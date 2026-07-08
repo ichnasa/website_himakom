@@ -1,8 +1,8 @@
 "use client"
 
 import { useActionState } from "react";
-import { loginAction } from "./action";
-import SubmitButton from "../components/SubmitButton";
+import SubmitButton from "@/app/components/SubmitButton";
+import { loginAction } from "@/app/action/login/action";
 
 const initialState = {
     error: ""

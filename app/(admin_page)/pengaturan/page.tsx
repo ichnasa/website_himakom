@@ -1,6 +1,6 @@
 "use client";
 
-import { getModulesAction, toggleModuleAction } from "@/app/sidebar/action";
+import { getModulesAction, toggleModuleAction } from "@/app/action/sidebar/action";
 import { ModuleItem } from "@/app/types/navigation";
 import { useEffect, useState } from "react";
 

@@ -27,3 +27,6 @@
 - If a function is already define what the return type is, when we call the function we don't have to add type annotation for the variable and we don't have to add type assertion anymore.
 - In react, state better be handled as immutable. If we mutate the data directly, react sometimes having difficult to track which one is changed. So its better to create new object because we dont mutate the old object (previous object)
 - For handling event, we can use window object event listener or context provide or store like zustand 
+- useTransition in react is to mark state updates as non-blocking, allowing UI to be responsive during heavy task or heavy rendering
+- Window object can't be used on server code
+- React Component will re-render if value on use effect dependency changes

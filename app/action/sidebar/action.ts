@@ -1,8 +1,8 @@
 "use server"
 
-import db from "../utils/database";
+import db from "../../utils/database";
 
-import { ModuleItem } from "../types/navigation";
+import { ModuleItem } from "../../types/navigation";
 
 export async function getModulesAction(): Promise<ModuleItem[] | []> {
     const rows: ModuleItem[] = db.prepare('SELECT * FROM module;').all() as ModuleItem[];

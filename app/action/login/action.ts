@@ -44,7 +44,7 @@ export async function loginAction(initialState: any, formData: FormData) {
     }
 
     try {
-        const token = await createJWT({ username });
+        const token = await createJWT({ username: user.username, role: user.role });
         const cookieStore = await cookies();
         cookieStore.set("jwt_token", token, { httpOnly: true, maxAge: 60 * 60 * 2, path: "/" });
     } catch (error) {
@@ -55,7 +55,7 @@ export async function loginAction(initialState: any, formData: FormData) {
 }
 
 export async function logoutAction() {
-  const cookieStore = await cookies()
-  cookieStore.delete('jwt_token')
-  redirect('/login')
+    const cookieStore = await cookies()
+    cookieStore.delete('jwt_token')
+    redirect('/login')
 }

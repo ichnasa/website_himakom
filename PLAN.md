@@ -29,4 +29,13 @@
 2. User login with the account
 3. Create JWT Token that expires in 2 hours
 4. Refresh Token for refreshing expired JWT token
-5. 
+
+### RBAC User
+1. Create a user table
+2. Create a module table
+3. Create a group table (group will be assigned a module access)
+4. Create a relationship many-to-many table group_module (group can have many module access and module can be assigned to more than 1 group)
+5. Create a relationship many-to-many table user_group (user can be assigned to many group and group can be assigned to many user)
+6. Create a group management page where admin can assign user to a group and module accessed can be toggle on/off on that group
+    -
+

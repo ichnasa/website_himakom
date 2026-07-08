@@ -1,18 +1,27 @@
 "use client"
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { getModulesAction } from "../sidebar/action";
+import { useEffect, useState, useTransition } from "react";
+import { getModulesAction } from "../action/sidebar/action";
 import { ModuleItem } from "../types/navigation";
+import { getCurrentUser } from "../action/pengguna/action";
+import { logoutAction } from "../action/login/action";
 
 
 export default function Sidebar() {
     const [currentNav, setCurrentNav] = useState<number | null>(null);
     const [sidebarNavigationItems, setSidebarNavigationItems] = useState<ModuleItem[]>([]);
+    const [pending, startTransition] = useTransition();
 
     const loadSidebarNavigationItems = async () => {
         const data = await getModulesAction();
-        setSidebarNavigationItems(data);
+        const user = await getCurrentUser();
+
+        setSidebarNavigationItems(
+            user?.role !== "admin"
+                ? data.filter((module) => module.name !== "pengaturan")
+                : data
+        )
     };
 
     useEffect(() => {
@@ -43,6 +52,11 @@ export default function Sidebar() {
                         )
                     ))}
                 </ul>
+                <li>
+                    <div onClick={() => startTransition(() => logoutAction())} className={`flex items-center px-2 py-1.5 text-gray-700 rounded-none hover:bg-gray-200 hover:text-black group transition-colors`}>
+                        <button type="submit" className="ms-3">Log out</button>
+                    </div>
+                </li>
             </div>
         </aside>
     );
