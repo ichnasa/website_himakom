@@ -20,9 +20,7 @@ export type FeedbackState = {
 };
 
 const FeedbackSchema = z.object({
-    category: z.enum(["Saran", "Kritik", "Pertanyaan", "Lainnya"], {
-        errorMap: () => ({ message: "Pilih kategori yang valid" }),
-    }),
+    category: z.enum(["Saran", "Kritik", "Pertanyaan", "Lainnya"]),
     message: z.string().min(10, "Pesan minimal 10 karakter").max(1000, "Pesan maksimal 1000 karakter"),
 });
 
