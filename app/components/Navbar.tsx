@@ -11,6 +11,7 @@ import MobileMenu from "./MobileMenu";
 const NAV_LINKS = [
   { label: "Beranda", href: "/" },
   { label: "Kalender Kegiatan", href: "/event" },
+  { label: "Peminjaman", href: "/peminjaman" },
   { label: "Links", href: "/links" },
 ];
 

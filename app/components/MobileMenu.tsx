@@ -5,7 +5,8 @@ import Link from "next/link";
 
 const NAV_LINKS = [
   { label: "Beranda", href: "/" },
-  { label: "Kalender Kegiatan", href: "/kegiatan" },
+  { label: "Kalender Kegiatan", href: "/event" },
+  { label: "Peminjaman", href: "/peminjaman" },
   { label: "Links", href: "/links" },
 ];
 

@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import db from "@/app/utils/database";
 import { createJWT } from "@/app/utils/auth";
 import * as z from "zod";
+import bcrypt from 'bcryptjs';
 
 interface User {
     id: number,
@@ -39,7 +40,8 @@ export async function loginAction(initialState: any, formData: FormData) {
         return { error: "Username tidak ditemukan" };
     }
 
-    if (user.password !== password) {
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
         return { error: "Password salah" };
     }
 

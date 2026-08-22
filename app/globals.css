@@ -9,10 +9,10 @@
  */
 @theme {
   /* Brand */
-  --color-primary: #0075de;
-  --color-primary-active: #005bab;
-  --color-primary-soft: #e6f3fe;
-  --color-primary-muted: #f2f9ff;
+  --color-primary: #000000;
+  --color-primary-active: #27272a; /* zinc-800 */
+  --color-primary-soft: #f4f4f5; /* zinc-100 */
+  --color-primary-muted: #fafafa; /* zinc-50 */
   --color-on-primary: #ffffff;
 
   /* Surface */
@@ -42,7 +42,7 @@
 }
 
 body {
-  background-color: #f5f5f5;
+  background-color: #ffffff;
   color: rgba(0, 0, 0, 0.95);
   font-family: Inter, -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -85,7 +85,7 @@ body {
 }
 
 .about-decoration {
-  background: radial-gradient(circle, rgba(0, 117, 222, 0.15) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.05) 0%, transparent 70%);
   transform: translate(30%, -30%);
 }
 
@@ -97,7 +97,7 @@ body {
 }
 
 .text-gradient-primary {
-  background: linear-gradient(135deg, #0075de 0%, #005bab 100%);
+  background: linear-gradient(135deg, #000000 0%, #3f3f46 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -128,7 +128,7 @@ body {
 }
 
 .feedback-decoration {
-  background: radial-gradient(circle, rgba(0, 117, 222, 0.2) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.05) 0%, transparent 70%);
   transform: translate(-30%, 30%);
 }
 

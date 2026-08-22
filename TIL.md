@@ -30,3 +30,5 @@
 - useTransition in react is to mark state updates as non-blocking, allowing UI to be responsive during heavy task or heavy rendering
 - Window object can't be used on server code
 - React Component will re-render if value on use effect dependency changes
+- If a component is visible based on parent component (parent component that decide if the component visible or not), give visibility state management to the component whose task is to decide when to show or hide
+- Dispatch type is for a setter function. e.g: const [count, setCount] = useState(0) will be Dispatch<SetStateAction<number>>
