@@ -1,19 +1,16 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useState } from "react";
 import { Item, BorrowingState } from "@/app/types/borrowing";
 import { createBorrowingAction } from "@/app/action/borrowing/action";
+import ItemImage from "@/app/components/ItemImage";
 
 export default function PeminjamanForm({ availableItems }: { availableItems: Item[] }) {
     const [state, formAction, pending] = useActionState<BorrowingState, FormData>(createBorrowingAction, { success: false, error: "", fieldErrors: {} });
     const [selectedItem, setSelectedItem] = useState<Item | null>(null);
     const [quantity, setQuantity] = useState(1);
     const [borrowDate, setBorrowDate] = useState("");
-    const [today, setToday] = useState("");
-
-    useEffect(() => {
-        setToday(new Date().toISOString().split('T')[0]);
-    }, []);
+    const [today] = useState(() => new Date().toISOString().split('T')[0]);
 
     const handleItemChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const item = availableItems.find(i => i.id.toString() === e.target.value);
@@ -28,25 +25,28 @@ export default function PeminjamanForm({ availableItems }: { availableItems: Ite
                     <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </div>
                 <h3 className="mb-2 text-xl font-semibold text-emerald-900">Permohonan Terkirim!</h3>
-                <p className="text-sm text-emerald-700 max-w-md mx-auto">
+                <p className="mb-6 text-sm text-emerald-700 max-w-md mx-auto">
                     Terima kasih, permohonan peminjaman Anda telah kami terima dan sedang menunggu persetujuan dari admin. Silakan cek secara berkala atau hubungi contact person kami.
                 </p>
                 <button 
                     onClick={() => window.location.reload()} 
-                    className="mt-6 rounded-lg bg-emerald-600 px-6 py-2 text-sm font-medium text-white hover:bg-emerald-700 transition-colors"
+                    className="rounded-xl bg-emerald-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 transition-colors"
                 >
-                    Ajukan Peminjaman Lain
+                    Pinjam Barang Lain
                 </button>
             </div>
         );
     }
 
     return (
-        <form action={formAction} className="rounded-2xl border border-black/10 bg-white p-6 sm:p-8 shadow-sm">
-            <h3 className="mb-6 text-xl font-semibold tracking-tight text-gray-900">Formulir Pengajuan</h3>
+        <form action={formAction} className="rounded-2xl border border-gray-200 bg-white p-6 sm:p-8 shadow-sm">
+            <div className="mb-6 border-b border-gray-100 pb-4">
+                <h3 className="text-xl font-bold tracking-tight text-gray-900">Formulir Pengajuan</h3>
+                <p className="text-xs text-gray-500 mt-1">Lengkapi data di bawah ini untuk mengajukan permohonan peminjaman.</p>
+            </div>
             
             {state.error && (
-                <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+                <div className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-600">
                     <div className="flex gap-2">
                         <svg className="h-5 w-5 shrink-0 text-red-500" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" /></svg>
                         <p>{state.error}</p>
@@ -69,6 +69,26 @@ export default function PeminjamanForm({ availableItems }: { availableItems: Ite
                         ))}
                     </select>
                     {state.fieldErrors.item_id?.[0] && <p className="mt-1 text-xs text-red-500">{state.fieldErrors.item_id[0]}</p>}
+
+                    {/* Mini preview for selected item */}
+                    {selectedItem && (
+                        <div className="mt-3 flex items-center gap-3.5 rounded-xl border border-gray-200 bg-gray-50/80 p-3">
+                            <div className="relative h-14 w-16 shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-white">
+                                <ItemImage
+                                    src={selectedItem.image_url}
+                                    alt={selectedItem.name}
+                                    containerClassName="h-full w-full"
+                                    className="h-full w-full object-cover"
+                                />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                                <p className="text-sm font-semibold text-gray-900 truncate">{selectedItem.name}</p>
+                                <p className="text-xs text-gray-500 mt-0.5">
+                                    <span className="font-medium text-gray-700">{selectedItem.category || "Umum"}</span> • Sisa stok: <span className="font-semibold text-gray-900">{selectedItem.available} unit</span>
+                                </p>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 <div>

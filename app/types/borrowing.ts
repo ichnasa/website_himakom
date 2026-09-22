@@ -37,6 +37,7 @@ export type ItemState = {
         description?: string[];
         quantity?: string[];
         category?: string[];
+        image?: string[];
     };
 };
 

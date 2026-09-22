@@ -76,6 +76,9 @@ addColumnIfNotExists('module', 'description', 'TEXT');
 addColumnIfNotExists('module', 'slug', 'VARCHAR(100)');
 addColumnIfNotExists('module', 'updated_at', 'DATETIME');
 
+// item: tambah image_url
+addColumnIfNotExists('item', 'image_url', 'TEXT');
+
 /* ------------------------------------------------------------------ */
 /*  Tabel baru sesuai ERD                                              */
 /* ------------------------------------------------------------------ */

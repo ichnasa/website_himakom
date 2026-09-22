@@ -1,7 +1,8 @@
 "use client";
 
-import { useActionState, useEffect, useState, useTransition } from "react";
+import { useActionState, useEffect, useRef, useState, useTransition } from "react";
 import { Item, Borrowing, BorrowingStatus, ItemState } from "@/app/types/borrowing";
+import ItemImage from "@/app/components/ItemImage";
 import {
     getItemsAction,
     createItemAction,
@@ -33,20 +34,133 @@ function ItemModal({ mode, initialData, onClose, onSuccess }: { mode: "create" |
     const action = mode === "create" ? createItemAction : updateItemAction;
     const [state, formAction, pending] = useActionState<ItemState, FormData>(action, { success: false, error: "", fieldErrors: {} });
 
-    useEffect(() => { if (state.success) onSuccess(); }, [state.success]);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(initialData?.image_url ?? null);
+    const [removeImage, setRemoveImage] = useState<boolean>(false);
+    const [inputMethod, setInputMethod] = useState<"file" | "url">("file");
+    const [urlValue, setUrlValue] = useState<string>(
+        initialData?.image_url && !initialData.image_url.startsWith("/uploads/") ? initialData.image_url : ""
+    );
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => { if (state.success) onSuccess(); }, [state.success, onSuccess]);
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const objectUrl = URL.createObjectURL(file);
+            setPreviewUrl(objectUrl);
+            setRemoveImage(false);
+        }
+    };
+
+    const handleRemovePhoto = () => {
+        setPreviewUrl(null);
+        setRemoveImage(true);
+        setUrlValue("");
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
+    };
+
+    const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value;
+        setUrlValue(val);
+        setRemoveImage(false);
+        setPreviewUrl(val.trim() || null);
+    };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4">
-            <div className="w-full max-w-md rounded-xl border border-black/10 bg-white p-6 shadow-xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4 overflow-y-auto">
+            <div className="w-full max-w-lg rounded-xl border border-black/10 bg-white p-6 shadow-xl my-8">
                 <div className="mb-5 flex items-center justify-between">
                     <h2 className="text-base font-semibold">{mode === "create" ? "Tambah Barang" : "Edit Barang"}</h2>
-                    <button onClick={onClose} className="rounded-full p-1 hover:bg-[#f9f9f8]"><svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg></button>
+                    <button type="button" onClick={onClose} className="rounded-full p-1 hover:bg-[#f9f9f8]"><svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg></button>
                 </div>
 
                 {state.error && <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600 border border-red-200">{state.error}</div>}
 
                 <form action={formAction} className="space-y-4">
                     {mode === "edit" && <input type="hidden" name="id" value={initialData?.id} />}
+                    {removeImage && <input type="hidden" name="remove_image" value="true" />}
+
+                    {/* FOTO BARANG */}
+                    <div>
+                        <div className="mb-1.5 flex items-center justify-between">
+                            <label className="text-xs font-semibold text-zinc-900">Foto Barang</label>
+                            <div className="flex text-[11px] gap-1 bg-zinc-100 p-0.5 rounded-md">
+                                <button
+                                    type="button"
+                                    onClick={() => setInputMethod("file")}
+                                    className={`px-2 py-0.5 rounded ${inputMethod === "file" ? "bg-white text-zinc-900 font-medium shadow-xs" : "text-zinc-500 hover:text-zinc-800"}`}
+                                >
+                                    Upload File
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setInputMethod("url")}
+                                    className={`px-2 py-0.5 rounded ${inputMethod === "url" ? "bg-white text-zinc-900 font-medium shadow-xs" : "text-zinc-500 hover:text-zinc-800"}`}
+                                >
+                                    Link URL
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Preview Box */}
+                        <div className="mb-3 flex items-center gap-4 rounded-lg border border-zinc-200 bg-zinc-50/70 p-3">
+                            <div className="relative h-20 w-24 shrink-0 overflow-hidden rounded-md border border-zinc-200 bg-white">
+                                <ItemImage
+                                    src={previewUrl}
+                                    alt="Preview"
+                                    containerClassName="h-full w-full"
+                                    className="h-full w-full object-cover"
+                                />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <p className="text-xs font-medium text-zinc-800 truncate">
+                                    {previewUrl ? "Foto aktif" : "Belum ada foto (fallback simpel)"}
+                                </p>
+                                <p className="text-[11px] text-zinc-400 mt-0.5">
+                                    Format: JPG, PNG, WEBP, GIF (maks. 5MB)
+                                </p>
+                                {previewUrl && (
+                                    <button
+                                        type="button"
+                                        onClick={handleRemovePhoto}
+                                        className="mt-2 inline-flex items-center gap-1 text-xs text-red-600 hover:text-red-700 font-medium"
+                                    >
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18M6 6l12 12" strokeLinecap="round" /></svg>
+                                        Hapus Foto
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+
+                        {inputMethod === "file" ? (
+                            <div>
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    name="image_file"
+                                    accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml"
+                                    onChange={handleFileChange}
+                                    className="w-full text-xs text-zinc-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-medium file:bg-zinc-900 file:text-white hover:file:bg-zinc-700 cursor-pointer"
+                                />
+                            </div>
+                        ) : (
+                            <div>
+                                <input
+                                    type="url"
+                                    name="image_url"
+                                    value={urlValue}
+                                    onChange={handleUrlChange}
+                                    placeholder="https://example.com/foto-barang.jpg"
+                                    className="w-full rounded-md border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900"
+                                />
+                            </div>
+                        )}
+                        {state.fieldErrors.image?.[0] && <p className="mt-1 text-xs text-red-500">{state.fieldErrors.image[0]}</p>}
+                    </div>
+
                     <div>
                         <label className="mb-1.5 block text-xs font-semibold">Nama Barang <span className="text-red-500">*</span></label>
                         <input name="name" defaultValue={initialData?.name} className="w-full rounded-md border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900" />
@@ -54,7 +168,7 @@ function ItemModal({ mode, initialData, onClose, onSuccess }: { mode: "create" |
                     </div>
                     <div>
                         <label className="mb-1.5 block text-xs font-semibold">Kategori</label>
-                        <input name="category" defaultValue={initialData?.category ?? ""} className="w-full rounded-md border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900" />
+                        <input name="category" defaultValue={initialData?.category ?? ""} placeholder="Misal: Elektronik, Kamera, Aksesoris" className="w-full rounded-md border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900" />
                     </div>
                     <div>
                         <label className="mb-1.5 block text-xs font-semibold">Total Jumlah (Stok Fisik) <span className="text-red-500">*</span></label>
@@ -206,22 +320,34 @@ export default function PeminjamanBarangAdmin() {
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     {items.length === 0 && <p className="col-span-full py-10 text-center text-sm text-zinc-400">Katalog barang kosong.</p>}
                     {items.map(item => (
-                        <div key={item.id} className="flex flex-col rounded-xl border border-black/10 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
-                            <div className="mb-3 flex items-start justify-between">
-                                <Badge text={item.category || "Umum"} color="gray" />
-                                <div className="flex gap-1">
-                                    <button onClick={() => { setEditItem(item); setIsItemModalOpen(true); }} className="text-zinc-400 hover:text-zinc-900 p-1"><svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
-                                    <button onClick={() => handleDeleteItem(item.id)} disabled={isPending} className="text-zinc-400 hover:text-red-500 p-1 disabled:opacity-50"><svg width="14" height="14" fill="none" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><path d="M10 11v6M14 11v6M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
+                        <div key={item.id} className="flex flex-col rounded-xl border border-black/10 bg-white overflow-hidden shadow-sm transition-all hover:shadow-md">
+                            {/* Photo / Fallback Banner */}
+                            <div className="relative h-36 w-full bg-zinc-50 border-b border-zinc-100">
+                                <ItemImage
+                                    src={item.image_url}
+                                    alt={item.name}
+                                    containerClassName="h-full w-full"
+                                    className="h-full w-full object-cover"
+                                />
+                                <div className="absolute top-2.5 left-2.5">
+                                    <Badge text={item.category || "Umum"} color="gray" />
+                                </div>
+                                <div className="absolute top-2.5 right-2.5 flex gap-1 rounded-lg bg-white/90 p-1 shadow-xs backdrop-blur-xs border border-zinc-200/50">
+                                    <button onClick={() => { setEditItem(item); setIsItemModalOpen(true); }} className="text-zinc-500 hover:text-zinc-900 p-1 rounded hover:bg-zinc-100" title="Edit Barang"><svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
+                                    <button onClick={() => handleDeleteItem(item.id)} disabled={isPending} className="text-zinc-500 hover:text-red-500 p-1 rounded hover:bg-red-50 disabled:opacity-50" title="Hapus Barang"><svg width="14" height="14" fill="none" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><path d="M10 11v6M14 11v6M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
                                 </div>
                             </div>
-                            <h3 className="font-semibold leading-tight text-zinc-900 mb-1">{item.name}</h3>
-                            <p className="text-xs text-zinc-500 mb-4 line-clamp-2 flex-1">{item.description}</p>
-                            
-                            <div className="mt-auto border-t border-zinc-100 pt-3 flex justify-between items-center text-sm">
-                                <span className="text-zinc-500">Tersedia:</span>
-                                <span className={`font-semibold ${item.available > 0 ? 'text-zinc-900' : 'text-red-500'}`}>
-                                    {item.available} <span className="text-zinc-400 font-normal">/ {item.quantity}</span>
-                                </span>
+
+                            <div className="p-4 flex flex-col flex-1">
+                                <h3 className="font-semibold leading-tight text-zinc-900 mb-1 line-clamp-1">{item.name}</h3>
+                                <p className="text-xs text-zinc-500 mb-4 line-clamp-2 flex-1">{item.description || "Tidak ada deskripsi."}</p>
+                                
+                                <div className="mt-auto border-t border-zinc-100 pt-3 flex justify-between items-center text-sm">
+                                    <span className="text-zinc-500 text-xs">Tersedia:</span>
+                                    <span className={`font-semibold ${item.available > 0 ? 'text-zinc-900' : 'text-red-500'}`}>
+                                        {item.available} <span className="text-zinc-400 font-normal text-xs">/ {item.quantity} unit</span>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     ))}
